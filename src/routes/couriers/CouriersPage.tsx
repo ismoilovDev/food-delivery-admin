@@ -1,3 +1,1 @@
-export function CouriersPage() {
-	return <div>Couriers</div>;
-}
+export default function CouriersPage() { return <div>CouriersPage</div>; }

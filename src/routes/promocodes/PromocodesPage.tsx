@@ -1,3 +1,1 @@
-export function PromocodesPage() {
-	return <div>Promocodes</div>;
-}
+export default function PromocodesPage() { return <div>PromocodesPage</div>; }

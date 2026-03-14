@@ -9,8 +9,8 @@ import {
 	ShoppingCart,
 	Tag,
 	Truck,
-	UtensilsCrossed,
 	Users,
+	UtensilsCrossed,
 } from "lucide-react";
 import { NavLink } from "react-router";
 import { cn } from "~/lib/utils";
@@ -43,9 +43,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 		>
 			{/* Logo */}
 			<div className="flex h-16 items-center border-b border-gray-200 px-4">
-				{!collapsed && (
-					<span className="text-lg font-bold text-orange-500">FoodAdmin</span>
-				)}
+				{!collapsed && <span className="text-lg font-bold text-orange-500">FoodAdmin</span>}
 			</div>
 
 			{/* Nav */}

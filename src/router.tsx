@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Navigate, createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { Layout } from "~/components/layout/Layout";
 import { ProtectedRoute } from "~/components/ProtectedRoute";
 import { authRoutes } from "~/routes/auth/routes";

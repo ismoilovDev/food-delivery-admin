@@ -1,1 +1,3 @@
-export default function RestaurantsPage() { return <div>RestaurantsPage</div>; }
+export default function RestaurantsPage() {
+	return <div>RestaurantsPage</div>;
+}

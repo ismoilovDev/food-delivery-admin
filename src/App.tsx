@@ -1,15 +1,11 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import { AppProviders } from "~/providers";
+import { router } from "~/router";
 
 function App() {
 	return (
 		<AppProviders>
-			<BrowserRouter>
-				<Routes>
-					<Route path="/login" element={<div>Login page</div>} />
-					<Route path="/" element={<Navigate to="/login" replace />} />
-				</Routes>
-			</BrowserRouter>
+			<RouterProvider router={router} />
 		</AppProviders>
 	);
 }

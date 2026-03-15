@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { Link, Outlet, useNavigate } from "react-router";
 import { buttonVariants } from "~/components/ui/Button";
 import { DataTable } from "~/components/ui/DataTable";
-import { CategoryFilter } from "./components/CategoryFilter";
 import { createCategoryColumns } from "./components/columns";
+import { CategoryFilter } from "./components/filter";
 import { usePage } from "./usePage";
 
 export default function CategoriesPage() {

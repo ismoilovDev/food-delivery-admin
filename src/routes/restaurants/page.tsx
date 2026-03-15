@@ -4,7 +4,7 @@ import { Link, Outlet, useNavigate } from "react-router";
 import { buttonVariants } from "~/components/ui/Button";
 import { DataTable } from "~/components/ui/DataTable";
 import { createRestaurantColumns } from "./components/columns";
-import { RestaurantFilter } from "./components/RestaurantFilter";
+import { RestaurantFilter } from "./components/filter";
 import { usePage } from "./usePage";
 
 export default function RestaurantsPage() {

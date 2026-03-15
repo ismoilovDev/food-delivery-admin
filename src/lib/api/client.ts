@@ -9,6 +9,10 @@ export function setAccessToken(token: string | null) {
 	accessToken = token;
 }
 
+export function getAccessToken() {
+	return accessToken;
+}
+
 const authMiddleware: Middleware = {
 	async onRequest({ request }) {
 		if (accessToken) {

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useMemo } from "react";
 import { Link, Outlet, useNavigate } from "react-router";
 import { buttonVariants } from "~/components/ui/Button";
@@ -29,7 +29,6 @@ export default function RestaurantsPage() {
 	} = usePage();
 
 	const navigate = useNavigate();
-	const totalPages = meta?.totalPages ?? 1;
 
 	const columns = useMemo(
 		() =>
@@ -41,33 +40,6 @@ export default function RestaurantsPage() {
 				onDelete: (id) => navigate(`/restaurants/${id}/delete`),
 			}),
 		[handleToggleOpen, handleToggleActive, toggleOpenPendingId, toggleActivePendingId, navigate],
-	);
-
-	const pagination = totalPages > 1 && (
-		<div className="flex items-center justify-between px-5 py-3">
-			<span className="text-xs text-gray-400">
-				{page + 1} / {totalPages} sahifa
-				{meta?.total && ` · ${meta.total} ta`}
-			</span>
-			<div className="flex gap-1.5">
-				<button
-					type="button"
-					disabled={page === 0}
-					onClick={() => handlePageChange(page - 1)}
-					className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
-				>
-					<ChevronLeft size={14} />
-				</button>
-				<button
-					type="button"
-					disabled={page >= totalPages - 1}
-					onClick={() => handlePageChange(page + 1)}
-					className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
-				>
-					<ChevronRight size={14} />
-				</button>
-			</div>
-		</div>
 	);
 
 	return (
@@ -108,7 +80,12 @@ export default function RestaurantsPage() {
 				isLoading={isLoading}
 				emptyTitle="Restoranlar topilmadi"
 				emptyDescription="Qidiruv yoki filterni o'zgartiring"
-				footer={pagination || undefined}
+				pagination={{
+					page,
+					totalPages: meta?.totalPages ?? 1,
+					total: meta?.total,
+					onPageChange: handlePageChange,
+				}}
 			/>
 
 			{/* Delete modal via nested route */}

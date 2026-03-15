@@ -169,7 +169,10 @@ export default function DashboardPage() {
 										tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
 									/>
 									<Tooltip
-										formatter={(value: number) => [`${formatPrice(value)} so'm`, "Daromad"]}
+										formatter={(value) => [
+											`${formatPrice(typeof value === "number" ? value : 0)} so'm`,
+											"Daromad",
+										]}
 										contentStyle={{
 											borderRadius: "8px",
 											border: "1px solid #e2e8f0",

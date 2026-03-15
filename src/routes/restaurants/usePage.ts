@@ -13,9 +13,7 @@ export function usePage() {
 	const [filterOpen, setFilterOpen] = useState<boolean | undefined>(undefined);
 	const [filterActive, setFilterActive] = useState<boolean | undefined>(undefined);
 
-	// ── Modal state ───────────────────────────────────────────────
-	const [createOpen, setCreateOpen] = useState(false);
-	const [editTarget, setEditTarget] = useState<RestaurantDto | null>(null);
+	// ── Delete modal ──────────────────────────────────────────────
 	const [deleteTarget, setDeleteTarget] = useState<RestaurantDto | null>(null);
 
 	// ── Query ─────────────────────────────────────────────────────
@@ -33,7 +31,6 @@ export function usePage() {
 	const toggleOpenMutation = useToggleRestaurantOpen();
 	const toggleActiveMutation = useToggleRestaurantActive();
 
-	// ── Handlers ──────────────────────────────────────────────────
 	function handleSearchChange(value: string) {
 		setSearch(value);
 		setPage(0);
@@ -72,11 +69,7 @@ export function usePage() {
 		handleSearchChange,
 		handleFilterOpenChange,
 		handleFilterActiveChange,
-		// modals
-		createOpen,
-		setCreateOpen,
-		editTarget,
-		setEditTarget,
+		// delete modal
 		deleteTarget,
 		setDeleteTarget,
 		// toggles

@@ -1,12 +1,10 @@
 import { ChevronLeft, ChevronRight, Edit2, Plus, Search, Star, Trash2 } from "lucide-react";
-import { Button } from "~/components/ui/Button";
+import { Link } from "react-router";
+import { buttonVariants } from "~/components/ui/Button";
 import { Modal } from "~/components/ui/Modal";
 import { Toggle } from "~/components/ui/Toggle";
 import { DeleteForm } from "./pages/delete/form";
 import { useDeleteAction } from "./pages/delete/useFormActions";
-import { RestaurantForm } from "./pages/form/form";
-import { useCreateAction, useEditAction } from "./pages/form/useFormActions";
-import { toFormDefaults } from "./pages/form/utils";
 import { usePage } from "./usePage";
 import { formatWorkingHours, getRestaurantInitial } from "./utils";
 
@@ -23,10 +21,6 @@ export default function RestaurantsPage() {
 		handleSearchChange,
 		handleFilterOpenChange,
 		handleFilterActiveChange,
-		createOpen,
-		setCreateOpen,
-		editTarget,
-		setEditTarget,
 		deleteTarget,
 		setDeleteTarget,
 		handleToggleOpen,
@@ -35,8 +29,6 @@ export default function RestaurantsPage() {
 		toggleActivePendingId,
 	} = usePage();
 
-	const createAction = useCreateAction(() => setCreateOpen(false));
-	const editAction = useEditAction(editTarget?.id ?? 0, () => setEditTarget(null));
 	const deleteAction = useDeleteAction(() => setDeleteTarget(null));
 
 	const totalPages = meta?.totalPages ?? 1;
@@ -51,10 +43,13 @@ export default function RestaurantsPage() {
 						<p className="mt-0.5 text-sm text-gray-500">Jami {meta.total} ta</p>
 					)}
 				</div>
-				<Button onClick={() => setCreateOpen(true)} className="w-full sm:w-auto">
+				<Link
+					to="/restaurants/new"
+					className={`${buttonVariants({ variant: "primary" })} w-full sm:w-auto`}
+				>
 					<Plus size={16} />
 					Restoran qo'shish
-				</Button>
+				</Link>
 			</div>
 
 			{/* Filters */}
@@ -213,14 +208,13 @@ export default function RestaurantsPage() {
 											</td>
 											<td className="px-4 py-3 text-right">
 												<div className="flex items-center justify-end gap-1">
-													<button
-														type="button"
-														onClick={() => setEditTarget(r)}
+													<Link
+														to={`/restaurants/${r.id}/edit`}
 														className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
 														title="Tahrirlash"
 													>
 														<Edit2 size={15} />
-													</button>
+													</Link>
 													<button
 														type="button"
 														onClick={() => setDeleteTarget(r)}
@@ -273,33 +267,7 @@ export default function RestaurantsPage() {
 				)}
 			</div>
 
-			{/* Create Modal */}
-			<Modal
-				open={createOpen}
-				onClose={() => setCreateOpen(false)}
-				title="Yangi restoran"
-				size="xl"
-			>
-				<RestaurantForm onSubmit={createAction.submit} isPending={createAction.isPending} />
-			</Modal>
-
-			{/* Edit Modal */}
-			<Modal
-				open={editTarget !== null}
-				onClose={() => setEditTarget(null)}
-				title="Restoranni tahrirlash"
-				size="xl"
-			>
-				{editTarget && (
-					<RestaurantForm
-						defaultValues={toFormDefaults(editTarget)}
-						onSubmit={editAction.submit}
-						isPending={editAction.isPending}
-					/>
-				)}
-			</Modal>
-
-			{/* Delete Modal */}
+			{/* Delete modal — confirmation only, modal as correct UX */}
 			<Modal
 				open={deleteTarget !== null}
 				onClose={() => setDeleteTarget(null)}

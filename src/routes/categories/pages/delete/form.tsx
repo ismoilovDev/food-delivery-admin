@@ -1,20 +1,20 @@
 import { Button } from "~/components/ui/button";
-import type { RestaurantDto } from "~/lib/api/services/restaurants";
+import type { CategoryDto } from "~/lib/api/services/categories";
 
 interface DeleteFormProps {
-	restaurant: RestaurantDto;
+	category: CategoryDto;
 	onConfirm: () => void;
 	onCancel: () => void;
 	isPending: boolean;
 }
 
-export function DeleteForm({ restaurant, onConfirm, onCancel, isPending }: DeleteFormProps) {
-	const name = restaurant.nameStr ?? restaurant.name?.uz ?? "Bu restoran";
+export function DeleteForm({ category, onConfirm, onCancel, isPending }: DeleteFormProps) {
+	const name = category.name?.uz ?? "Bu kategoriya";
 
 	return (
 		<div className="flex flex-col gap-4">
 			<p className="text-sm text-gray-600">
-				<span className="font-semibold text-gray-900">{name}</span> restoranini o'chirishni
+				<span className="font-semibold text-gray-900">{name}</span> kategoriyasini o'chirishni
 				tasdiqlaysizmi? Bu amalni qaytarib bo'lmaydi.
 			</p>
 			<div className="flex justify-end gap-2">

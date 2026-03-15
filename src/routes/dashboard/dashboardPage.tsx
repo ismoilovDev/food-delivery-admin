@@ -21,8 +21,8 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import { SectionCard } from "~/components/ui/SectionCard";
-import { StatCard } from "~/components/ui/StatCard";
+import { SectionCard } from "~/components/ui/sectionCard";
+import { StatCard } from "~/components/ui/statCard";
 import {
 	useDashboardOverview,
 	useOrdersDistribution,

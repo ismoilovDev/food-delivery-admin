@@ -3,28 +3,24 @@ import { useMemo } from "react";
 import { Link, Outlet, useNavigate } from "react-router";
 import { buttonVariants } from "~/components/ui/button";
 import { DataTable } from "~/components/ui/dataTable";
-import { createRestaurantColumns } from "./components/columns";
-import { RestaurantFilter } from "./components/filter";
+import { createCategoryColumns } from "./components/columns";
+import { CategoryFilter } from "./components/filter";
 import { usePage } from "./usePage";
 
-export default function RestaurantsPage() {
+export default function CategoriesPage() {
 	const {
-		restaurants,
+		categories,
 		meta,
 		isLoading,
 		page,
 		handlePageChange,
 		search,
-		filterOpen,
 		filterActive,
 		hasActiveFilters,
 		handleSearchChange,
-		handleFilterOpenChange,
 		handleFilterActiveChange,
 		handleClearFilters,
-		handleToggleOpen,
 		handleToggleActive,
-		toggleOpenPendingId,
 		toggleActivePendingId,
 	} = usePage();
 
@@ -32,14 +28,12 @@ export default function RestaurantsPage() {
 
 	const columns = useMemo(
 		() =>
-			createRestaurantColumns({
-				onToggleOpen: handleToggleOpen,
+			createCategoryColumns({
 				onToggleActive: handleToggleActive,
-				toggleOpenPendingId: toggleOpenPendingId ?? null,
 				toggleActivePendingId: toggleActivePendingId ?? null,
-				onDelete: (id) => navigate(`/restaurants/${id}/delete`),
+				onDelete: (id) => navigate(`/categories/${id}/delete`),
 			}),
-		[handleToggleOpen, handleToggleActive, toggleOpenPendingId, toggleActivePendingId, navigate],
+		[handleToggleActive, toggleActivePendingId, navigate],
 	);
 
 	return (
@@ -47,13 +41,13 @@ export default function RestaurantsPage() {
 			{/* Page header */}
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div>
-					<h1 className="text-lg font-bold text-gray-900">Restoranlar</h1>
+					<h1 className="text-lg font-bold text-gray-900">Kategoriyalar</h1>
 					<p className="mt-0.5 text-sm text-gray-400">
-						{meta?.total !== undefined ? `${meta.total} ta restoran` : "Yuklanmoqda..."}
+						{meta?.total !== undefined ? `${meta.total} ta kategoriya` : "Yuklanmoqda..."}
 					</p>
 				</div>
 				<Link
-					to="/restaurants/new"
+					to="/categories/new"
 					className={`${buttonVariants({ variant: "primary" })} w-full gap-2 sm:w-auto`}
 				>
 					<Plus size={15} />
@@ -62,13 +56,11 @@ export default function RestaurantsPage() {
 			</div>
 
 			{/* Filter */}
-			<RestaurantFilter
+			<CategoryFilter
 				search={search}
-				filterOpen={filterOpen}
 				filterActive={filterActive}
 				hasActiveFilters={hasActiveFilters}
 				onSearchChange={handleSearchChange}
-				onOpenChange={handleFilterOpenChange}
 				onActiveChange={handleFilterActiveChange}
 				onClear={handleClearFilters}
 			/>
@@ -76,9 +68,9 @@ export default function RestaurantsPage() {
 			{/* Table */}
 			<DataTable
 				columns={columns}
-				data={restaurants}
+				data={categories}
 				isLoading={isLoading}
-				emptyTitle="Restoranlar topilmadi"
+				emptyTitle="Kategoriyalar topilmadi"
 				emptyDescription="Qidiruv yoki filterni o'zgartiring"
 				pagination={{
 					page,

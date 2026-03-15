@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
-import { Layout } from "~/components/layout/Layout";
-import { ProtectedRoute } from "~/components/ProtectedRoute";
+import { Layout } from "~/components/layout/layout";
+import { ProtectedRoute } from "~/components/protectedRoute";
 import { authRoutes } from "~/routes/auth/routes";
 import { categoryRoutes } from "~/routes/categories/routes";
 import { courierRoutes } from "~/routes/couriers/routes";

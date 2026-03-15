@@ -1,6 +1,6 @@
 import type { TextareaHTMLAttributes } from "react";
 import { type Control, Controller, type FieldValues, type Path } from "react-hook-form";
-import { Textarea } from "~/components/ui/Textarea";
+import { Textarea } from "~/components/ui/textarea";
 
 interface FormTextareaProps<T extends FieldValues>
 	extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "name" | "defaultValue"> {

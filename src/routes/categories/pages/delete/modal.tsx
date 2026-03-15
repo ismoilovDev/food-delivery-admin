@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router";
 import { Modal } from "~/components/ui/modal";
-import { useRestaurantById } from "~/lib/api/hooks/useRestaurants";
+import { useCategoryById } from "~/lib/api/hooks/useCategories";
 import { DeleteForm } from "./form";
 import { useDeleteAction } from "./useFormActions";
 
@@ -9,7 +9,7 @@ export function DeleteModal() {
 	const navigate = useNavigate();
 	const numId = id ? Number(id) : 0;
 
-	const { data: restaurant } = useRestaurantById(numId);
+	const { data: category } = useCategoryById(numId);
 
 	function handleClose() {
 		navigate(-1);
@@ -18,10 +18,10 @@ export function DeleteModal() {
 	const deleteAction = useDeleteAction(handleClose);
 
 	return (
-		<Modal open onClose={handleClose} title="Restoranni o'chirish" size="sm">
-			{restaurant ? (
+		<Modal open onClose={handleClose} title="Kategoriyani o'chirish" size="sm">
+			{category ? (
 				<DeleteForm
-					restaurant={restaurant}
+					category={category}
 					onConfirm={() => deleteAction.submit(numId)}
 					onCancel={handleClose}
 					isPending={deleteAction.isPending}

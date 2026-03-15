@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router";
-import { Header } from "./Header";
-import { Sidebar } from "./Sidebar";
+import { Header } from "./header";
+import { Sidebar } from "./sidebar";
 
 export function Layout() {
 	const [collapsed, setCollapsed] = useState(false);

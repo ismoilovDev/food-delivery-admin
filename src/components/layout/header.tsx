@@ -7,6 +7,7 @@ const ROUTE_LABELS: Record<string, string> = {
 	"/restaurants": "Restoranlar",
 	"/restaurants/new": "Yangi restoran",
 	"/categories": "Kategoriyalar",
+	"/categories/new": "Yangi kategoriya",
 	"/products": "Mahsulotlar",
 	"/orders": "Buyurtmalar",
 	"/couriers": "Kuryerlar",
@@ -19,6 +20,7 @@ const ROUTE_LABELS: Record<string, string> = {
 function getPageTitle(pathname: string): string {
 	if (ROUTE_LABELS[pathname]) return ROUTE_LABELS[pathname];
 	if (pathname.match(/\/restaurants\/\d+\/edit/)) return "Restoranni tahrirlash";
+	if (pathname.match(/\/categories\/\d+\/edit/)) return "Kategoriyani tahrirlash";
 	return "Admin Panel";
 }
 

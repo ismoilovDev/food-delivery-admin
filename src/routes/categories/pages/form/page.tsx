@@ -1,6 +1,6 @@
-import { ArrowLeft, Clock, DollarSign, Image, Info, MapPin, Phone } from "lucide-react";
+import { ArrowLeft, Hash, Image, Layers, Tag } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { RestaurantForm } from "./form";
+import { CategoryForm } from "./form";
 import { useCreateAction, useEditAction } from "./useFormActions";
 import { useFormPage } from "./usePage";
 import { toFormDefaults } from "./utils";
@@ -18,39 +18,29 @@ function FormSkeleton() {
 
 const INFO_CARDS = [
 	{
-		icon: Info,
+		icon: Tag,
 		title: "Nom (I18n)",
-		desc: "O'zbekcha, Ruscha va Inglizcha nomlarni kiriting. Kamida bittasi majburiy.",
+		desc: "O'zbekcha nom majburiy. Ruscha va Inglizcha ixtiyoriy.",
 	},
 	{
 		icon: Image,
-		title: "Logo & Banner",
-		desc: "Logo — kvadrat, 200×200px yoki katta. Banner — keng format, 1200×400px tavsiya etiladi.",
+		title: "Rasm",
+		desc: "Kategoriya rasmi. Kvadrat format (200×200px) tavsiya etiladi.",
 	},
 	{
-		icon: Phone,
-		title: "Aloqa",
-		desc: "Telefon raqami xalqaro formatda (+998...). Email ixtiyoriy.",
+		icon: Hash,
+		title: "Tartib",
+		desc: "Kategoriyalar tartibini belgilash uchun raqam kiriting. Kichik raqam birinchi ko'rinadi.",
 	},
 	{
-		icon: Clock,
-		title: "Ish vaqti",
-		desc: "Restoran ish boshlash va tugash vaqtini kiriting.",
-	},
-	{
-		icon: MapPin,
-		title: "Manzil",
-		desc: "O'zbekcha, Ruscha va Inglizcha manzillarni kiriting.",
-	},
-	{
-		icon: DollarSign,
-		title: "Narxlar",
-		desc: "Yetkazib berish narxi, minimal buyurtma va o'rtacha yetkazib berish vaqti (daqiqa).",
+		icon: Layers,
+		title: "Ota-kategoriya",
+		desc: "Agar bu pastki kategoriya bo'lsa, ota-kategoriyani tanlang.",
 	},
 ];
 
-export default function RestaurantFormPage() {
-	const { isEdit, numId, restaurant, isLoading, goBack } = useFormPage();
+export default function CategoryFormPage() {
+	const { isEdit, numId, category, isLoading, goBack } = useFormPage();
 
 	const createAction = useCreateAction(goBack);
 	const editAction = useEditAction(numId, goBack);
@@ -71,11 +61,11 @@ export default function RestaurantFormPage() {
 				</button>
 				<div>
 					<h1 className="text-lg font-bold text-gray-900">
-						{isEdit ? "Restoranni tahrirlash" : "Yangi restoran qo'shish"}
+						{isEdit ? "Kategoriyani tahrirlash" : "Yangi kategoriya qo'shish"}
 					</h1>
 					<p className="text-sm text-gray-400">
-						{isEdit && restaurant
-							? (restaurant.nameStr ?? restaurant.name?.uz)
+						{isEdit && category
+							? (category.name?.uz ?? category.name?.ru)
 							: "Barcha kerakli ma'lumotlarni to'ldiring"}
 					</p>
 				</div>
@@ -89,8 +79,8 @@ export default function RestaurantFormPage() {
 						{isEdit && isLoading ? (
 							<FormSkeleton />
 						) : (
-							<RestaurantForm
-								defaultValues={isEdit && restaurant ? toFormDefaults(restaurant) : undefined}
+							<CategoryForm
+								defaultValues={isEdit && category ? toFormDefaults(category) : undefined}
 								onSubmit={onSubmit}
 								isPending={isPending}
 							/>
@@ -126,7 +116,7 @@ export default function RestaurantFormPage() {
 							loading={isPending}
 							className="w-full"
 						>
-							{isEdit ? "O'zgarishlarni saqlash" : "Restoran qo'shish"}
+							{isEdit ? "O'zgarishlarni saqlash" : "Kategoriya qo'shish"}
 						</Button>
 						<Button type="button" variant="secondary" onClick={goBack} className="w-full">
 							Bekor qilish

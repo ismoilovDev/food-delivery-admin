@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { FormInput } from "~/components/inputs";
+import { FormFileUploader, FormInput } from "~/components/inputs";
 import { Button } from "~/components/ui/Button";
 import { I18nField } from "./components/I18nField";
 import { type RestaurantFormData, restaurantSchema } from "./schema";
@@ -35,12 +35,12 @@ export function RestaurantForm({ defaultValues, onSubmit, isPending }: Restauran
 			</div>
 
 			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-				<FormInput control={control} name="logoUrl" label="Logo URL" placeholder="https://..." />
-				<FormInput
+				<FormFileUploader control={control} name="logoUrl" label="Logo" hint="PNG, JPG — 1:1" />
+				<FormFileUploader
 					control={control}
 					name="bannerUrl"
-					label="Banner URL"
-					placeholder="https://..."
+					label="Banner"
+					hint="PNG, JPG — 16:9"
 				/>
 			</div>
 

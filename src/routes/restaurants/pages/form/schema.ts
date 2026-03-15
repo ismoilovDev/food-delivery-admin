@@ -16,9 +16,10 @@ export const restaurantSchema = z.object({
 	bannerUrl: z.string().url("Noto'g'ri URL format").optional().or(z.literal("")),
 	workingHoursStart: z.string().optional(),
 	workingHoursEnd: z.string().optional(),
-	deliveryFee: z.coerce.number().min(0, "Manfiy bo'lmasligi kerak").optional(),
-	minOrderAmount: z.coerce.number().min(0, "Manfiy bo'lmasligi kerak").optional(),
-	averageDeliveryTime: z.coerce.number().min(0, "Manfiy bo'lmasligi kerak").optional(),
+	// FormInput type="number" passes valueAsNumber → native number value
+	deliveryFee: z.number().min(0, "Manfiy bo'lmasligi kerak").optional(),
+	minOrderAmount: z.number().min(0, "Manfiy bo'lmasligi kerak").optional(),
+	averageDeliveryTime: z.number().min(0, "Manfiy bo'lmasligi kerak").optional(),
 });
 
 export type RestaurantFormData = z.infer<typeof restaurantSchema>;

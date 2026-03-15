@@ -12,7 +12,7 @@ interface RestaurantFormProps {
 }
 
 export function RestaurantForm({ defaultValues, onSubmit, isPending }: RestaurantFormProps) {
-	const { control, handleSubmit } = useForm<RestaurantFormData>({
+	const { control, handleSubmit } = useForm<RestaurantFormData, unknown, RestaurantFormData>({
 		resolver: zodResolver(restaurantSchema),
 		defaultValues,
 	});

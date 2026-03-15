@@ -13,8 +13,11 @@ export function FormInput<T extends FieldValues>({
 	control,
 	name,
 	label,
+	type,
 	...rest
 }: FormInputProps<T>) {
+	const isNumber = type === "number";
+
 	return (
 		<Controller
 			control={control}
@@ -22,9 +25,20 @@ export function FormInput<T extends FieldValues>({
 			render={({ field, fieldState }) => (
 				<Input
 					{...rest}
-					{...field}
+					type={type}
 					label={label}
 					value={field.value ?? ""}
+					onChange={(e) => {
+						if (isNumber) {
+							const n = e.target.valueAsNumber;
+							field.onChange(Number.isNaN(n) ? undefined : n);
+						} else {
+							field.onChange(e);
+						}
+					}}
+					onBlur={field.onBlur}
+					ref={field.ref}
+					name={field.name}
 					error={fieldState.error?.message}
 				/>
 			)}

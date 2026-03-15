@@ -11,6 +11,7 @@ export async function uploadFile(file: File): Promise<FileResDto> {
 			fd.append("file", file);
 			return fd;
 		},
+		headers: { "Content-Type": undefined },
 	});
 	if (error) throw error;
 	if (!data?.data) throw new Error("Upload javobida fayl ma'lumoti yo'q");

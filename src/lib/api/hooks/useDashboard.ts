@@ -12,7 +12,7 @@ import {
 export const dashboardKeys = {
 	all: ["dashboard"] as const,
 	overview: () => [...dashboardKeys.all, "overview"] as const,
-	revenueStats: (params?: { startDate?: string; endDate?: string }) =>
+	revenueStats: (params: { startDate: string; endDate: string }) =>
 		[...dashboardKeys.all, "revenue", "stats", params] as const,
 	revenueToday: () => [...dashboardKeys.all, "revenue", "today"] as const,
 	revenueMonth: () => [...dashboardKeys.all, "revenue", "month"] as const,
@@ -29,7 +29,7 @@ export function useDashboardOverview() {
 	});
 }
 
-export function useRevenueStats(params?: { startDate?: string; endDate?: string }) {
+export function useRevenueStats(params: { startDate: string; endDate: string }) {
 	return useQuery({
 		queryKey: dashboardKeys.revenueStats(params),
 		queryFn: () => getRevenueStats(params),
@@ -64,7 +64,7 @@ export function useOrdersDistribution() {
 export function useTopProducts(limit = 5) {
 	return useQuery({
 		queryKey: dashboardKeys.topProducts(limit),
-		queryFn: () => getTopProducts({ limit }),
+		queryFn: () => getTopProducts(limit),
 		select: (res) => res.data,
 	});
 }
@@ -72,7 +72,7 @@ export function useTopProducts(limit = 5) {
 export function useTopCouriers(limit = 5) {
 	return useQuery({
 		queryKey: dashboardKeys.topCouriers(limit),
-		queryFn: () => getTopCouriers({ limit }),
+		queryFn: () => getTopCouriers(limit),
 		select: (res) => res.data,
 	});
 }

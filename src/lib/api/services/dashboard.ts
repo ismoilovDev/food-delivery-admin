@@ -6,7 +6,7 @@ export async function getDashboardOverview() {
 	return data;
 }
 
-export async function getRevenueStats(params?: { startDate?: string; endDate?: string }) {
+export async function getRevenueStats(params: { startDate: string; endDate: string }) {
 	const { data, error } = await apiClient.GET("/api/dashboard/revenue/stats", {
 		params: { query: params },
 	});
@@ -32,17 +32,17 @@ export async function getOrdersDistribution() {
 	return data;
 }
 
-export async function getTopProducts(params?: { limit?: number }) {
+export async function getTopProducts(limit?: number) {
 	const { data, error } = await apiClient.GET("/api/dashboard/products/top", {
-		params: { query: params },
+		params: { query: limit !== undefined ? { limit } : undefined },
 	});
 	if (error) throw error;
 	return data;
 }
 
-export async function getTopCouriers(params?: { limit?: number }) {
+export async function getTopCouriers(limit?: number) {
 	const { data, error } = await apiClient.GET("/api/dashboard/couriers/top", {
-		params: { query: params },
+		params: { query: limit !== undefined ? { limit } : undefined },
 	});
 	if (error) throw error;
 	return data;

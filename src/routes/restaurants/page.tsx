@@ -1,10 +1,11 @@
-import { ChevronLeft, ChevronRight, Edit2, Plus, Star, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { useMemo } from "react";
 import { Link, Outlet, useNavigate } from "react-router";
 import { buttonVariants } from "~/components/ui/Button";
-import { Toggle } from "~/components/ui/Toggle";
+import { DataTable } from "~/components/ui/DataTable";
+import { createRestaurantColumns } from "./components/columns";
 import { RestaurantFilter } from "./components/RestaurantFilter";
 import { usePage } from "./usePage";
-import { formatWorkingHours, getRestaurantInitial } from "./utils";
 
 export default function RestaurantsPage() {
 	const {
@@ -30,6 +31,45 @@ export default function RestaurantsPage() {
 	const navigate = useNavigate();
 	const totalPages = meta?.totalPages ?? 1;
 
+	const columns = useMemo(
+		() =>
+			createRestaurantColumns({
+				onToggleOpen: handleToggleOpen,
+				onToggleActive: handleToggleActive,
+				toggleOpenPendingId: toggleOpenPendingId ?? null,
+				toggleActivePendingId: toggleActivePendingId ?? null,
+				onDelete: (id) => navigate(`/restaurants/${id}/delete`),
+			}),
+		[handleToggleOpen, handleToggleActive, toggleOpenPendingId, toggleActivePendingId, navigate],
+	);
+
+	const pagination = totalPages > 1 && (
+		<div className="flex items-center justify-between px-5 py-3">
+			<span className="text-xs text-gray-400">
+				{page + 1} / {totalPages} sahifa
+				{meta?.total && ` · ${meta.total} ta`}
+			</span>
+			<div className="flex gap-1.5">
+				<button
+					type="button"
+					disabled={page === 0}
+					onClick={() => handlePageChange(page - 1)}
+					className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
+				>
+					<ChevronLeft size={14} />
+				</button>
+				<button
+					type="button"
+					disabled={page >= totalPages - 1}
+					onClick={() => handlePageChange(page + 1)}
+					className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
+				>
+					<ChevronRight size={14} />
+				</button>
+			</div>
+		</div>
+	);
+
 	return (
 		<div className="flex flex-col gap-5">
 			{/* Page header */}
@@ -49,7 +89,7 @@ export default function RestaurantsPage() {
 				</Link>
 			</div>
 
-			{/* Filter bar */}
+			{/* Filter */}
 			<RestaurantFilter
 				search={search}
 				filterOpen={filterOpen}
@@ -61,210 +101,17 @@ export default function RestaurantsPage() {
 				onClear={handleClearFilters}
 			/>
 
-			{/* Table card */}
-			<div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-				<div className="overflow-x-auto">
-					<table className="w-full text-sm">
-						<thead>
-							<tr className="border-b border-gray-100">
-								<th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
-									Restoran
-								</th>
-								<th className="hidden px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-400 md:table-cell">
-									Telefon
-								</th>
-								<th className="hidden px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-400 lg:table-cell">
-									Ish vaqti
-								</th>
-								<th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-gray-400">
-									Ochiq
-								</th>
-								<th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-gray-400">
-									Faol
-								</th>
-								<th className="hidden px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-gray-400 sm:table-cell">
-									Reyting
-								</th>
-								<th className="px-5 py-3.5 text-right text-xs font-semibold uppercase tracking-wide text-gray-400">
-									Amallar
-								</th>
-							</tr>
-						</thead>
-						<tbody className="divide-y divide-gray-50">
-							{isLoading
-								? Array.from({ length: 6 }).map((_, i) => (
-										// biome-ignore lint/suspicious/noArrayIndexKey: skeleton
-										<tr key={i}>
-											<td className="px-5 py-4">
-												<div className="flex items-center gap-3">
-													<div className="h-10 w-10 animate-pulse rounded-xl bg-gray-100" />
-													<div className="flex flex-col gap-1.5">
-														<div className="h-3.5 w-32 animate-pulse rounded-md bg-gray-100" />
-														<div className="h-3 w-20 animate-pulse rounded-md bg-gray-100" />
-													</div>
-												</div>
-											</td>
-											<td className="hidden px-5 py-4 md:table-cell">
-												<div className="h-3.5 w-28 animate-pulse rounded-md bg-gray-100" />
-											</td>
-											<td className="hidden px-5 py-4 lg:table-cell">
-												<div className="h-3.5 w-20 animate-pulse rounded-md bg-gray-100" />
-											</td>
-											<td className="px-5 py-4">
-												<div className="mx-auto h-5 w-9 animate-pulse rounded-full bg-gray-100" />
-											</td>
-											<td className="px-5 py-4">
-												<div className="mx-auto h-5 w-9 animate-pulse rounded-full bg-gray-100" />
-											</td>
-											<td className="hidden px-5 py-4 sm:table-cell">
-												<div className="mx-auto h-3.5 w-10 animate-pulse rounded-md bg-gray-100" />
-											</td>
-											<td className="px-5 py-4 text-right">
-												<div className="ml-auto h-7 w-16 animate-pulse rounded-lg bg-gray-100" />
-											</td>
-										</tr>
-									))
-								: restaurants.map((r) => (
-										<tr key={r.id} className="transition-colors hover:bg-orange-50/30">
-											{/* Name + Logo */}
-											<td className="px-5 py-4">
-												<div className="flex items-center gap-3">
-													{r.logoUrl ? (
-														<img
-															src={r.logoUrl}
-															alt={r.nameStr ?? ""}
-															className="h-10 w-10 rounded-xl object-cover shadow-sm"
-														/>
-													) : (
-														<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-sm font-bold text-orange-500">
-															{getRestaurantInitial(r.nameStr, r.name?.uz)}
-														</div>
-													)}
-													<div>
-														<p className="font-semibold text-gray-800">{r.nameStr ?? r.name?.uz}</p>
-														<p className="text-xs text-gray-400">
-															{r.addressStr ?? r.address?.uz ?? "—"}
-														</p>
-													</div>
-												</div>
-											</td>
+			{/* Table */}
+			<DataTable
+				columns={columns}
+				data={restaurants}
+				isLoading={isLoading}
+				emptyTitle="Restoranlar topilmadi"
+				emptyDescription="Qidiruv yoki filterni o'zgartiring"
+				footer={pagination || undefined}
+			/>
 
-											{/* Phone */}
-											<td className="hidden px-5 py-4 text-gray-500 md:table-cell">
-												{r.phone ?? "—"}
-											</td>
-
-											{/* Working hours */}
-											<td className="hidden px-5 py-4 lg:table-cell">
-												<span className="rounded-lg bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600">
-													{formatWorkingHours(r.workingHoursStart, r.workingHoursEnd)}
-												</span>
-											</td>
-
-											{/* Toggle open */}
-											<td className="px-5 py-4">
-												<div className="flex justify-center">
-													<Toggle
-														checked={r.isOpen ?? false}
-														onChange={() => r.id && handleToggleOpen(r.id)}
-														loading={toggleOpenPendingId === r.id}
-													/>
-												</div>
-											</td>
-
-											{/* Toggle active */}
-											<td className="px-5 py-4">
-												<div className="flex justify-center">
-													<Toggle
-														checked={r.isActive ?? false}
-														onChange={() => r.id && handleToggleActive(r.id)}
-														loading={toggleActivePendingId === r.id}
-													/>
-												</div>
-											</td>
-
-											{/* Rating */}
-											<td className="hidden px-5 py-4 text-center sm:table-cell">
-												{r.rating && r.rating > 0 ? (
-													<span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-600">
-														<Star size={11} className="fill-amber-400 text-amber-400" />
-														{r.rating.toFixed(1)}
-													</span>
-												) : (
-													<span className="text-gray-300">—</span>
-												)}
-											</td>
-
-											{/* Actions */}
-											<td className="px-5 py-4 text-right">
-												<div className="flex items-center justify-end gap-1">
-													<Link
-														to={`/restaurants/${r.id}/edit`}
-														className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
-														title="Tahrirlash"
-													>
-														<Edit2 size={15} />
-													</Link>
-													<button
-														type="button"
-														onClick={() => r.id && navigate(`/restaurants/${r.id}/delete`)}
-														className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
-														title="O'chirish"
-													>
-														<Trash2 size={15} />
-													</button>
-												</div>
-											</td>
-										</tr>
-									))}
-
-							{!isLoading && restaurants.length === 0 && (
-								<tr>
-									<td colSpan={7} className="px-5 py-16 text-center">
-										<div className="flex flex-col items-center gap-2">
-											<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100">
-												<Star size={20} className="text-gray-400" />
-											</div>
-											<p className="font-medium text-gray-500">Restoranlar topilmadi</p>
-											<p className="text-sm text-gray-400">Qidiruv yoki filterni o'zgartiring</p>
-										</div>
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
-
-				{/* Pagination */}
-				{totalPages > 1 && (
-					<div className="flex items-center justify-between border-t border-gray-100 px-5 py-3">
-						<span className="text-xs text-gray-400">
-							{page + 1} / {totalPages} sahifa
-							{meta?.total && ` · ${meta.total} ta`}
-						</span>
-						<div className="flex gap-1.5">
-							<button
-								type="button"
-								disabled={page === 0}
-								onClick={() => handlePageChange(page - 1)}
-								className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
-							>
-								<ChevronLeft size={14} />
-							</button>
-							<button
-								type="button"
-								disabled={page >= totalPages - 1}
-								onClick={() => handlePageChange(page + 1)}
-								className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
-							>
-								<ChevronRight size={14} />
-							</button>
-						</div>
-					</div>
-				)}
-			</div>
-
-			{/* Delete modal rendered via nested route outlet */}
+			{/* Delete modal via nested route */}
 			<Outlet />
 		</div>
 	);

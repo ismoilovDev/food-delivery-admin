@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router";
-import { Modal } from "~/components/ui/Modal";
+import { Modal } from "~/components/ui/modal";
 import { useRestaurantById } from "~/lib/api/hooks/useRestaurants";
 import { DeleteForm } from "./form";
 import { useDeleteAction } from "./useFormActions";

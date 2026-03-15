@@ -1,5 +1,5 @@
 import { ArrowLeft, Clock, DollarSign, Image, Info, MapPin, Phone } from "lucide-react";
-import { Button } from "~/components/ui/Button";
+import { Button } from "~/components/ui/button";
 import { RestaurantForm } from "./form";
 import { useCreateAction, useEditAction } from "./useFormActions";
 import { useFormPage } from "./usePage";

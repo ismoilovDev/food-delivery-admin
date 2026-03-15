@@ -1,8 +1,8 @@
 import { Plus } from "lucide-react";
 import { useMemo } from "react";
 import { Link, Outlet, useNavigate } from "react-router";
-import { buttonVariants } from "~/components/ui/Button";
-import { DataTable } from "~/components/ui/DataTable";
+import { buttonVariants } from "~/components/ui/button";
+import { DataTable } from "~/components/ui/dataTable";
 import { createRestaurantColumns } from "./components/columns";
 import { RestaurantFilter } from "./components/filter";
 import { usePage } from "./usePage";

@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Edit2, Trash2 } from "lucide-react";
 import { Link } from "react-router";
-import { Toggle } from "~/components/ui/Toggle";
+import { Toggle } from "~/components/ui/toggle";
 import type { CategoryDto } from "~/lib/api/services/categories";
 import { getCategoryInitial } from "../utils";
 

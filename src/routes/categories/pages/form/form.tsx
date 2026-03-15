@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { FormFileUploader, FormInput } from "~/components/inputs";
-import { Button } from "~/components/ui/Button";
+import { Button } from "~/components/ui/button";
 import { useAllCategories } from "~/lib/api/hooks/useCategories";
-import { I18nField } from "./components/I18nField";
+import { I18nField } from "./components/i18nField";
 import { type CategoryFormData, categorySchema } from "./schema";
 
 interface CategoryFormProps {

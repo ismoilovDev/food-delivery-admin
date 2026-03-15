@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { FormFileUploader, FormInput } from "~/components/inputs";
-import { Button } from "~/components/ui/Button";
-import { I18nField } from "./components/I18nField";
+import { Button } from "~/components/ui/button";
+import { I18nField } from "./components/i18nField";
 import { type RestaurantFormData, restaurantSchema } from "./schema";
 
 interface RestaurantFormProps {

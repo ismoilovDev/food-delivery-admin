@@ -1,5 +1,5 @@
 import { ArrowLeft, Hash, Image, Layers, Tag } from "lucide-react";
-import { Button } from "~/components/ui/Button";
+import { Button } from "~/components/ui/button";
 import { CategoryForm } from "./form";
 import { useCreateAction, useEditAction } from "./useFormActions";
 import { useFormPage } from "./usePage";

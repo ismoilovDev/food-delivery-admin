@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import type { RouteObject } from "react-router";
 
-const UsersPage = lazy(() => import("./UsersPage"));
+const UsersPage = lazy(() => import("./usersPage"));
 
 export const userRoutes: RouteObject[] = [{ path: "users", element: <UsersPage /> }];

@@ -3,8 +3,8 @@ import { Eye, EyeOff, Lock, Phone, UtensilsCrossed } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "~/components/ui/Button";
-import { Input } from "~/components/ui/Input";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { useLogin } from "~/lib/api/hooks/useAuth";
 
 const loginSchema = z.object({

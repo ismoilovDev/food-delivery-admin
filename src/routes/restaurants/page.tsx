@@ -1,10 +1,8 @@
-import { ChevronLeft, ChevronRight, Edit2, Filter, Plus, Search, Star, Trash2 } from "lucide-react";
-import { Link } from "react-router";
+import { ChevronLeft, ChevronRight, Edit2, Plus, Star, Trash2 } from "lucide-react";
+import { Link, Outlet, useNavigate } from "react-router";
 import { buttonVariants } from "~/components/ui/Button";
-import { Modal } from "~/components/ui/Modal";
 import { Toggle } from "~/components/ui/Toggle";
-import { DeleteForm } from "./pages/delete/form";
-import { useDeleteAction } from "./pages/delete/useFormActions";
+import { RestaurantFilter } from "./components/RestaurantFilter";
 import { usePage } from "./usePage";
 import { formatWorkingHours, getRestaurantInitial } from "./utils";
 
@@ -14,24 +12,23 @@ export default function RestaurantsPage() {
 		meta,
 		isLoading,
 		page,
-		setPage,
+		handlePageChange,
 		search,
 		filterOpen,
 		filterActive,
+		hasActiveFilters,
 		handleSearchChange,
 		handleFilterOpenChange,
 		handleFilterActiveChange,
-		deleteTarget,
-		setDeleteTarget,
+		handleClearFilters,
 		handleToggleOpen,
 		handleToggleActive,
 		toggleOpenPendingId,
 		toggleActivePendingId,
 	} = usePage();
 
-	const deleteAction = useDeleteAction(() => setDeleteTarget(null));
+	const navigate = useNavigate();
 	const totalPages = meta?.totalPages ?? 1;
-	const hasActiveFilters = search !== "" || filterOpen !== undefined || filterActive !== undefined;
 
 	return (
 		<div className="flex flex-col gap-5">
@@ -53,60 +50,16 @@ export default function RestaurantsPage() {
 			</div>
 
 			{/* Filter bar */}
-			<div className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:flex-row sm:items-center">
-				<div className="relative flex-1">
-					<Search size={14} className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
-					<input
-						type="text"
-						placeholder="Restoran nomi..."
-						value={search}
-						onChange={(e) => handleSearchChange(e.target.value)}
-						className="h-9 w-full rounded-xl border border-gray-200 bg-gray-50 pr-3 pl-9 text-sm text-gray-800 placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 transition-colors"
-					/>
-				</div>
-
-				<div className="flex items-center gap-2">
-					<Filter size={14} className="shrink-0 text-gray-400" />
-					<select
-						value={filterOpen === undefined ? "" : String(filterOpen)}
-						onChange={(e) =>
-							handleFilterOpenChange(e.target.value === "" ? undefined : e.target.value === "true")
-						}
-						className="h-9 rounded-xl border border-gray-200 bg-gray-50 px-3 text-sm text-gray-700 focus:border-orange-400 focus:outline-none transition-colors"
-					>
-						<option value="">Holat</option>
-						<option value="true">Ochiq</option>
-						<option value="false">Yopiq</option>
-					</select>
-					<select
-						value={filterActive === undefined ? "" : String(filterActive)}
-						onChange={(e) =>
-							handleFilterActiveChange(
-								e.target.value === "" ? undefined : e.target.value === "true",
-							)
-						}
-						className="h-9 rounded-xl border border-gray-200 bg-gray-50 px-3 text-sm text-gray-700 focus:border-orange-400 focus:outline-none transition-colors"
-					>
-						<option value="">Faollik</option>
-						<option value="true">Faol</option>
-						<option value="false">Nofaol</option>
-					</select>
-
-					{hasActiveFilters && (
-						<button
-							type="button"
-							onClick={() => {
-								handleSearchChange("");
-								handleFilterOpenChange(undefined);
-								handleFilterActiveChange(undefined);
-							}}
-							className="h-9 rounded-xl px-3 text-xs font-medium text-orange-500 hover:bg-orange-50 transition-colors"
-						>
-							Tozalash
-						</button>
-					)}
-				</div>
-			</div>
+			<RestaurantFilter
+				search={search}
+				filterOpen={filterOpen}
+				filterActive={filterActive}
+				hasActiveFilters={hasActiveFilters}
+				onSearchChange={handleSearchChange}
+				onOpenChange={handleFilterOpenChange}
+				onActiveChange={handleFilterActiveChange}
+				onClear={handleClearFilters}
+			/>
 
 			{/* Table card */}
 			<div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
@@ -254,7 +207,7 @@ export default function RestaurantsPage() {
 													</Link>
 													<button
 														type="button"
-														onClick={() => setDeleteTarget(r)}
+														onClick={() => r.id && navigate(`/restaurants/${r.id}/delete`)}
 														className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
 														title="O'chirish"
 													>
@@ -270,7 +223,7 @@ export default function RestaurantsPage() {
 									<td colSpan={7} className="px-5 py-16 text-center">
 										<div className="flex flex-col items-center gap-2">
 											<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100">
-												<Search size={20} className="text-gray-400" />
+												<Star size={20} className="text-gray-400" />
 											</div>
 											<p className="font-medium text-gray-500">Restoranlar topilmadi</p>
 											<p className="text-sm text-gray-400">Qidiruv yoki filterni o'zgartiring</p>
@@ -293,7 +246,7 @@ export default function RestaurantsPage() {
 							<button
 								type="button"
 								disabled={page === 0}
-								onClick={() => setPage((p) => p - 1)}
+								onClick={() => handlePageChange(page - 1)}
 								className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
 							>
 								<ChevronLeft size={14} />
@@ -301,7 +254,7 @@ export default function RestaurantsPage() {
 							<button
 								type="button"
 								disabled={page >= totalPages - 1}
-								onClick={() => setPage((p) => p + 1)}
+								onClick={() => handlePageChange(page + 1)}
 								className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
 							>
 								<ChevronRight size={14} />
@@ -311,22 +264,8 @@ export default function RestaurantsPage() {
 				)}
 			</div>
 
-			{/* Delete modal */}
-			<Modal
-				open={deleteTarget !== null}
-				onClose={() => setDeleteTarget(null)}
-				title="Restoranni o'chirish"
-				size="sm"
-			>
-				{deleteTarget && (
-					<DeleteForm
-						restaurant={deleteTarget}
-						onConfirm={() => deleteTarget.id && deleteAction.submit(deleteTarget.id)}
-						onCancel={() => setDeleteTarget(null)}
-						isPending={deleteAction.isPending}
-					/>
-				)}
-			</Modal>
+			{/* Delete modal rendered via nested route outlet */}
+			<Outlet />
 		</div>
 	);
 }

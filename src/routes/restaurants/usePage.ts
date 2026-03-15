@@ -1,20 +1,24 @@
-import { useState } from "react";
+import { useSearchParams } from "react-router";
 import {
 	useRestaurants,
 	useToggleRestaurantActive,
 	useToggleRestaurantOpen,
 } from "~/lib/api/hooks/useRestaurants";
-import type { RestaurantDto } from "~/lib/api/services/restaurants";
+
+function parseOptBool(value: string | null): boolean | undefined {
+	if (value === "true") return true;
+	if (value === "false") return false;
+	return undefined;
+}
 
 export function usePage() {
-	// ── Filters & pagination ──────────────────────────────────────
-	const [page, setPage] = useState(0);
-	const [search, setSearch] = useState("");
-	const [filterOpen, setFilterOpen] = useState<boolean | undefined>(undefined);
-	const [filterActive, setFilterActive] = useState<boolean | undefined>(undefined);
+	const [searchParams, setSearchParams] = useSearchParams();
 
-	// ── Delete modal ──────────────────────────────────────────────
-	const [deleteTarget, setDeleteTarget] = useState<RestaurantDto | null>(null);
+	// ── Read from URL ──────────────────────────────────────────────
+	const search = searchParams.get("search") ?? "";
+	const filterOpen = parseOptBool(searchParams.get("isOpen"));
+	const filterActive = parseOptBool(searchParams.get("isActive"));
+	const page = Number(searchParams.get("page") ?? "0");
 
 	// ── Query ─────────────────────────────────────────────────────
 	const criteria = {
@@ -31,19 +35,60 @@ export function usePage() {
 	const toggleOpenMutation = useToggleRestaurantOpen();
 	const toggleActiveMutation = useToggleRestaurantActive();
 
+	// ── URL writers ───────────────────────────────────────────────
 	function handleSearchChange(value: string) {
-		setSearch(value);
-		setPage(0);
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				if (value) next.set("search", value);
+				else next.delete("search");
+				next.delete("page");
+				return next;
+			},
+			{ replace: true },
+		);
 	}
 
 	function handleFilterOpenChange(value: boolean | undefined) {
-		setFilterOpen(value);
-		setPage(0);
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				if (value !== undefined) next.set("isOpen", String(value));
+				else next.delete("isOpen");
+				next.delete("page");
+				return next;
+			},
+			{ replace: true },
+		);
 	}
 
 	function handleFilterActiveChange(value: boolean | undefined) {
-		setFilterActive(value);
-		setPage(0);
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				if (value !== undefined) next.set("isActive", String(value));
+				else next.delete("isActive");
+				next.delete("page");
+				return next;
+			},
+			{ replace: true },
+		);
+	}
+
+	function handleClearFilters() {
+		setSearchParams(new URLSearchParams(), { replace: true });
+	}
+
+	function handlePageChange(newPage: number) {
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				if (newPage === 0) next.delete("page");
+				else next.set("page", String(newPage));
+				return next;
+			},
+			{ replace: true },
+		);
 	}
 
 	function handleToggleOpen(id: number) {
@@ -61,17 +106,16 @@ export function usePage() {
 		isLoading,
 		// pagination
 		page,
-		setPage,
+		handlePageChange,
 		// filters
 		search,
 		filterOpen,
 		filterActive,
+		hasActiveFilters: search !== "" || filterOpen !== undefined || filterActive !== undefined,
 		handleSearchChange,
 		handleFilterOpenChange,
 		handleFilterActiveChange,
-		// delete modal
-		deleteTarget,
-		setDeleteTarget,
+		handleClearFilters,
 		// toggles
 		handleToggleOpen,
 		handleToggleActive,

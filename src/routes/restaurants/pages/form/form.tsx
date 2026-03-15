@@ -73,7 +73,8 @@ export function RestaurantForm({ defaultValues, onSubmit, isPending }: Restauran
 				/>
 			</div>
 
-			<Button type="submit" loading={isPending} className="mt-1">
+			{/* Mobile submit — hidden on xl (sidebar has button) */}
+			<Button type="submit" loading={isPending} className="mt-1 xl:hidden">
 				Saqlash
 			</Button>
 		</form>

@@ -12,7 +12,8 @@
 			"!**/dist",
 			"!**/public",
 			"!**/src/components/ui",
-			"!**/src/lib/api/schema.d.ts"
+			"!**/src/lib/api/schema.d.ts",
+			"!**/*.css"
 		]
 	},
 	"formatter": {

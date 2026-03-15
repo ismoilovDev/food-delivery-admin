@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Edit2, Plus, Search, Star, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit2, Filter, Plus, Search, Star, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import { buttonVariants } from "~/components/ui/Button";
 import { Modal } from "~/components/ui/Modal";
@@ -30,49 +30,51 @@ export default function RestaurantsPage() {
 	} = usePage();
 
 	const deleteAction = useDeleteAction(() => setDeleteTarget(null));
-
 	const totalPages = meta?.totalPages ?? 1;
+	const hasActiveFilters = search !== "" || filterOpen !== undefined || filterActive !== undefined;
 
 	return (
-		<div className="flex flex-col gap-6">
-			{/* Header */}
+		<div className="flex flex-col gap-5">
+			{/* Page header */}
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div>
-					<h1 className="text-xl font-bold text-gray-900">Restoranlar</h1>
-					{meta?.total !== undefined && (
-						<p className="mt-0.5 text-sm text-gray-500">Jami {meta.total} ta</p>
-					)}
+					<h1 className="text-lg font-bold text-gray-900">Restoranlar</h1>
+					<p className="mt-0.5 text-sm text-gray-400">
+						{meta?.total !== undefined ? `${meta.total} ta restoran` : "Yuklanmoqda..."}
+					</p>
 				</div>
 				<Link
 					to="/restaurants/new"
-					className={`${buttonVariants({ variant: "primary" })} w-full sm:w-auto`}
+					className={`${buttonVariants({ variant: "primary" })} w-full gap-2 sm:w-auto`}
 				>
-					<Plus size={16} />
-					Restoran qo'shish
+					<Plus size={15} />
+					Qo'shish
 				</Link>
 			</div>
 
-			{/* Filters */}
-			<div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+			{/* Filter bar */}
+			<div className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:flex-row sm:items-center">
 				<div className="relative flex-1">
-					<Search size={15} className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
+					<Search size={14} className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
 					<input
 						type="text"
-						placeholder="Restoran nomi bo'yicha qidirish..."
+						placeholder="Restoran nomi..."
 						value={search}
 						onChange={(e) => handleSearchChange(e.target.value)}
-						className="h-10 w-full rounded-lg border border-gray-200 bg-white py-2 pr-4 pl-9 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
+						className="h-9 w-full rounded-xl border border-gray-200 bg-gray-50 pr-3 pl-9 text-sm text-gray-800 placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 transition-colors"
 					/>
 				</div>
-				<div className="flex gap-2">
+
+				<div className="flex items-center gap-2">
+					<Filter size={14} className="shrink-0 text-gray-400" />
 					<select
 						value={filterOpen === undefined ? "" : String(filterOpen)}
 						onChange={(e) =>
 							handleFilterOpenChange(e.target.value === "" ? undefined : e.target.value === "true")
 						}
-						className="h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-orange-400 focus:outline-none"
+						className="h-9 rounded-xl border border-gray-200 bg-gray-50 px-3 text-sm text-gray-700 focus:border-orange-400 focus:outline-none transition-colors"
 					>
-						<option value="">Barcha holat</option>
+						<option value="">Holat</option>
 						<option value="true">Ochiq</option>
 						<option value="false">Yopiq</option>
 					</select>
@@ -83,102 +85,131 @@ export default function RestaurantsPage() {
 								e.target.value === "" ? undefined : e.target.value === "true",
 							)
 						}
-						className="h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-orange-400 focus:outline-none"
+						className="h-9 rounded-xl border border-gray-200 bg-gray-50 px-3 text-sm text-gray-700 focus:border-orange-400 focus:outline-none transition-colors"
 					>
-						<option value="">Barcha faollik</option>
+						<option value="">Faollik</option>
 						<option value="true">Faol</option>
 						<option value="false">Nofaol</option>
 					</select>
+
+					{hasActiveFilters && (
+						<button
+							type="button"
+							onClick={() => {
+								handleSearchChange("");
+								handleFilterOpenChange(undefined);
+								handleFilterActiveChange(undefined);
+							}}
+							className="h-9 rounded-xl px-3 text-xs font-medium text-orange-500 hover:bg-orange-50 transition-colors"
+						>
+							Tozalash
+						</button>
+					)}
 				</div>
 			</div>
 
-			{/* Table */}
-			<div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+			{/* Table card */}
+			<div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
 				<div className="overflow-x-auto">
 					<table className="w-full text-sm">
 						<thead>
-							<tr className="border-b border-gray-100 bg-gray-50/60">
-								<th className="px-4 py-3 text-left font-medium text-gray-500">Restoran</th>
-								<th className="hidden px-4 py-3 text-left font-medium text-gray-500 md:table-cell">
+							<tr className="border-b border-gray-100">
+								<th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
+									Restoran
+								</th>
+								<th className="hidden px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-400 md:table-cell">
 									Telefon
 								</th>
-								<th className="hidden px-4 py-3 text-left font-medium text-gray-500 lg:table-cell">
+								<th className="hidden px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-400 lg:table-cell">
 									Ish vaqti
 								</th>
-								<th className="px-4 py-3 text-center font-medium text-gray-500">Ochiq</th>
-								<th className="px-4 py-3 text-center font-medium text-gray-500">Faol</th>
-								<th className="hidden px-4 py-3 text-center font-medium text-gray-500 sm:table-cell">
+								<th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-gray-400">
+									Ochiq
+								</th>
+								<th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-gray-400">
+									Faol
+								</th>
+								<th className="hidden px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-gray-400 sm:table-cell">
 									Reyting
 								</th>
-								<th className="px-4 py-3 text-right font-medium text-gray-500">Amallar</th>
+								<th className="px-5 py-3.5 text-right text-xs font-semibold uppercase tracking-wide text-gray-400">
+									Amallar
+								</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody className="divide-y divide-gray-50">
 							{isLoading
 								? Array.from({ length: 6 }).map((_, i) => (
-										// biome-ignore lint/suspicious/noArrayIndexKey: skeleton rows
-										<tr key={i} className="border-b border-gray-50">
-											<td className="px-4 py-3">
+										// biome-ignore lint/suspicious/noArrayIndexKey: skeleton
+										<tr key={i}>
+											<td className="px-5 py-4">
 												<div className="flex items-center gap-3">
-													<div className="h-9 w-9 animate-pulse rounded-lg bg-gray-100" />
-													<div className="h-4 w-32 animate-pulse rounded bg-gray-100" />
+													<div className="h-10 w-10 animate-pulse rounded-xl bg-gray-100" />
+													<div className="flex flex-col gap-1.5">
+														<div className="h-3.5 w-32 animate-pulse rounded-md bg-gray-100" />
+														<div className="h-3 w-20 animate-pulse rounded-md bg-gray-100" />
+													</div>
 												</div>
 											</td>
-											<td className="hidden px-4 py-3 md:table-cell">
-												<div className="h-4 w-28 animate-pulse rounded bg-gray-100" />
+											<td className="hidden px-5 py-4 md:table-cell">
+												<div className="h-3.5 w-28 animate-pulse rounded-md bg-gray-100" />
 											</td>
-											<td className="hidden px-4 py-3 lg:table-cell">
-												<div className="h-4 w-20 animate-pulse rounded bg-gray-100" />
+											<td className="hidden px-5 py-4 lg:table-cell">
+												<div className="h-3.5 w-20 animate-pulse rounded-md bg-gray-100" />
 											</td>
-											<td className="px-4 py-3">
+											<td className="px-5 py-4">
 												<div className="mx-auto h-5 w-9 animate-pulse rounded-full bg-gray-100" />
 											</td>
-											<td className="px-4 py-3">
+											<td className="px-5 py-4">
 												<div className="mx-auto h-5 w-9 animate-pulse rounded-full bg-gray-100" />
 											</td>
-											<td className="hidden px-4 py-3 sm:table-cell">
-												<div className="mx-auto h-4 w-10 animate-pulse rounded bg-gray-100" />
+											<td className="hidden px-5 py-4 sm:table-cell">
+												<div className="mx-auto h-3.5 w-10 animate-pulse rounded-md bg-gray-100" />
 											</td>
-											<td className="px-4 py-3 text-right">
-												<div className="ml-auto h-7 w-16 animate-pulse rounded bg-gray-100" />
+											<td className="px-5 py-4 text-right">
+												<div className="ml-auto h-7 w-16 animate-pulse rounded-lg bg-gray-100" />
 											</td>
 										</tr>
 									))
 								: restaurants.map((r) => (
-										<tr
-											key={r.id}
-											className="border-b border-gray-50 transition-colors last:border-0 hover:bg-gray-50/50"
-										>
-											<td className="px-4 py-3">
+										<tr key={r.id} className="transition-colors hover:bg-orange-50/30">
+											{/* Name + Logo */}
+											<td className="px-5 py-4">
 												<div className="flex items-center gap-3">
 													{r.logoUrl ? (
 														<img
 															src={r.logoUrl}
 															alt={r.nameStr ?? ""}
-															className="h-9 w-9 rounded-lg object-cover"
+															className="h-10 w-10 rounded-xl object-cover shadow-sm"
 														/>
 													) : (
-														<div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-100 text-sm font-bold text-orange-600">
+														<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-sm font-bold text-orange-500">
 															{getRestaurantInitial(r.nameStr, r.name?.uz)}
 														</div>
 													)}
 													<div>
-														<div className="font-medium text-gray-900">
-															{r.nameStr ?? r.name?.uz}
-														</div>
-														<div className="text-xs text-gray-400">
-															{r.addressStr ?? r.address?.uz}
-														</div>
+														<p className="font-semibold text-gray-800">{r.nameStr ?? r.name?.uz}</p>
+														<p className="text-xs text-gray-400">
+															{r.addressStr ?? r.address?.uz ?? "—"}
+														</p>
 													</div>
 												</div>
 											</td>
-											<td className="hidden px-4 py-3 text-gray-600 md:table-cell">
+
+											{/* Phone */}
+											<td className="hidden px-5 py-4 text-gray-500 md:table-cell">
 												{r.phone ?? "—"}
 											</td>
-											<td className="hidden px-4 py-3 text-gray-600 lg:table-cell">
-												{formatWorkingHours(r.workingHoursStart, r.workingHoursEnd)}
+
+											{/* Working hours */}
+											<td className="hidden px-5 py-4 lg:table-cell">
+												<span className="rounded-lg bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600">
+													{formatWorkingHours(r.workingHoursStart, r.workingHoursEnd)}
+												</span>
 											</td>
-											<td className="px-4 py-3">
+
+											{/* Toggle open */}
+											<td className="px-5 py-4">
 												<div className="flex justify-center">
 													<Toggle
 														checked={r.isOpen ?? false}
@@ -187,7 +218,9 @@ export default function RestaurantsPage() {
 													/>
 												</div>
 											</td>
-											<td className="px-4 py-3">
+
+											{/* Toggle active */}
+											<td className="px-5 py-4">
 												<div className="flex justify-center">
 													<Toggle
 														checked={r.isActive ?? false}
@@ -196,21 +229,25 @@ export default function RestaurantsPage() {
 													/>
 												</div>
 											</td>
-											<td className="hidden px-4 py-3 text-center sm:table-cell">
+
+											{/* Rating */}
+											<td className="hidden px-5 py-4 text-center sm:table-cell">
 												{r.rating && r.rating > 0 ? (
-													<span className="inline-flex items-center gap-1 font-medium text-amber-500">
-														<Star size={13} className="fill-amber-400 text-amber-400" />
+													<span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-600">
+														<Star size={11} className="fill-amber-400 text-amber-400" />
 														{r.rating.toFixed(1)}
 													</span>
 												) : (
 													<span className="text-gray-300">—</span>
 												)}
 											</td>
-											<td className="px-4 py-3 text-right">
+
+											{/* Actions */}
+											<td className="px-5 py-4 text-right">
 												<div className="flex items-center justify-end gap-1">
 													<Link
 														to={`/restaurants/${r.id}/edit`}
-														className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
+														className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
 														title="Tahrirlash"
 													>
 														<Edit2 size={15} />
@@ -218,7 +255,7 @@ export default function RestaurantsPage() {
 													<button
 														type="button"
 														onClick={() => setDeleteTarget(r)}
-														className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+														className="rounded-xl p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
 														title="O'chirish"
 													>
 														<Trash2 size={15} />
@@ -230,8 +267,14 @@ export default function RestaurantsPage() {
 
 							{!isLoading && restaurants.length === 0 && (
 								<tr>
-									<td colSpan={7} className="px-4 py-12 text-center text-gray-400">
-										Restoranlar topilmadi
+									<td colSpan={7} className="px-5 py-16 text-center">
+										<div className="flex flex-col items-center gap-2">
+											<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100">
+												<Search size={20} className="text-gray-400" />
+											</div>
+											<p className="font-medium text-gray-500">Restoranlar topilmadi</p>
+											<p className="text-sm text-gray-400">Qidiruv yoki filterni o'zgartiring</p>
+										</div>
 									</td>
 								</tr>
 							)}
@@ -241,33 +284,34 @@ export default function RestaurantsPage() {
 
 				{/* Pagination */}
 				{totalPages > 1 && (
-					<div className="flex items-center justify-between border-t border-gray-100 px-4 py-3">
-						<span className="text-xs text-gray-500">
+					<div className="flex items-center justify-between border-t border-gray-100 px-5 py-3">
+						<span className="text-xs text-gray-400">
 							{page + 1} / {totalPages} sahifa
+							{meta?.total && ` · ${meta.total} ta`}
 						</span>
-						<div className="flex gap-1">
+						<div className="flex gap-1.5">
 							<button
 								type="button"
 								disabled={page === 0}
 								onClick={() => setPage((p) => p - 1)}
-								className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+								className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
 							>
-								<ChevronLeft size={15} />
+								<ChevronLeft size={14} />
 							</button>
 							<button
 								type="button"
 								disabled={page >= totalPages - 1}
 								onClick={() => setPage((p) => p + 1)}
-								className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+								className="flex h-8 w-8 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-40"
 							>
-								<ChevronRight size={15} />
+								<ChevronRight size={14} />
 							</button>
 						</div>
 					</div>
 				)}
 			</div>
 
-			{/* Delete modal — confirmation only, modal as correct UX */}
+			{/* Delete modal */}
 			<Modal
 				open={deleteTarget !== null}
 				onClose={() => setDeleteTarget(null)}
